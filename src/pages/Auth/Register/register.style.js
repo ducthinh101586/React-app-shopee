@@ -27,7 +27,7 @@ export const FormTitle = styled.div`
   color: #222;
   text-transform: capitalize;
 `
-export const Form = styled.div``
+export const Form = styled.form``
 
 export const FormControl = styled.div`
   margin-bottom: 2.5rem;
