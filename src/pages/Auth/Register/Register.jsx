@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { Button } from '../../../assets/styles/until'
@@ -7,6 +7,7 @@ import InputPassword from '../../../components/InputPassword/InputPassword'
 import InputText from '../../../components/InputText/InputText'
 import { path } from '../../../Constants/path'
 import { rules } from '../../../Constants/rules'
+import http from '../../../utils/http'
 import * as S from './register.style'
 
 export default function Register() {
@@ -26,6 +27,12 @@ export default function Register() {
   const handleRegister = data => {
     console.log(data)
   }
+
+  useEffect(() => {
+    http.get('products').then(res => {
+      console.log(res)
+    })
+  }, [])
 
   return (
     <div>
