@@ -8,13 +8,18 @@ import { path } from '../../../Constants/path'
 import { rules } from '../../../Constants/rules'
 import { Button } from '../../../assets/styles/until'
 import { Link } from '@material-ui/core'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { unwrapResult } from '@reduxjs/toolkit'
+import { login } from '../auth.slice'
 
 export default function Login() {
   const {
     control,
     handleSubmit,
     getValues,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm({
     defaultValues: {
       email: '',
@@ -22,8 +27,29 @@ export default function Login() {
     }
   })
 
+  const dispatch = useDispatch()
+
+  const history = useHistory()
+
   const handleLogin = async data => {
-    console.log(data)
+    const body = {
+      email: data.email,
+      password: data.password
+    }
+    try {
+      const res = await dispatch(login(body))
+      unwrapResult(res)
+      history.push(path.home)
+    } catch (error) {
+      if (error.status === 422) {
+        for (const key in error.data) {
+          setError(key, {
+            type: 'server',
+            message: error.data[key]
+          })
+        }
+      }
+    }
   }
 
   return (
