@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
+import PropTypes from 'prop-types'
 
 export default function MainLayout({ children }) {
   return (
@@ -10,4 +11,8 @@ export default function MainLayout({ children }) {
       <Footer />
     </div>
   )
+}
+
+MainLayout.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.arrayOf(PropTypes.element)])
 }
