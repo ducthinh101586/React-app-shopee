@@ -30,7 +30,7 @@ const handleAuthFullfilled = (state, action) => {
 const auth = createSlice({
   name: 'auth',
   initialState: {
-    profile: JSON.parse(localStorage.getItem(LocalStorage.user)) || {}
+    profile: localStorage.getItem(LocalStorage.user) || {}
   },
   extraReducers: {
     [register.fulfilled]: handleAuthFullfilled,
