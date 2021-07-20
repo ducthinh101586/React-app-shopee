@@ -7,6 +7,9 @@ import Register from './pages/Auth/Register/Register'
 import NotFound from './pages/NotFound/NotFound'
 import RegisterLayout from './layouts/RegisterLayout/RegisterLayout'
 import MainLayout from './layouts/MainLayout/MainLayout'
+import UnauthenticatedGuard from './guards/UnauthenticatedGuard'
+import User from './pages/User/User'
+import AuthenticatedGuard from './guards/AuthenticatedGuard'
 
 export default function Routes() {
   return (
@@ -18,15 +21,27 @@ export default function Routes() {
       </Route>
 
       <Route path={path.login}>
-        <RegisterLayout title="Đăng nhập">
-          <Login />
-        </RegisterLayout>
+        <UnauthenticatedGuard>
+          <RegisterLayout title="Đăng nhập">
+            <Login />
+          </RegisterLayout>
+        </UnauthenticatedGuard>
       </Route>
 
       <Route path={path.register}>
-        <RegisterLayout title="Đăng ký">
-          <Register />
-        </RegisterLayout>
+        <UnauthenticatedGuard>
+          <RegisterLayout title="Đăng ký">
+            <Register />
+          </RegisterLayout>
+        </UnauthenticatedGuard>
+      </Route>
+
+      <Route path={path.user}>
+        <AuthenticatedGuard>
+          <MainLayout>
+            <User />
+          </MainLayout>
+        </AuthenticatedGuard>
       </Route>
 
       <Route path={path.notfound}>
