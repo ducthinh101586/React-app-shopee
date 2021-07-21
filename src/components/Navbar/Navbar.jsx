@@ -1,16 +1,18 @@
 import React, { Fragment } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { path } from '../../Constants/path'
 import { useAuthenticated } from '../../hooks/useAuthenticated'
 import usePopover from '../../hooks/usePopover'
+import { logout } from '../../pages/Auth/auth.slice'
 import Popover from '../Popover/Popover'
 import * as S from './navbar.style'
 
 export default function Navbar() {
   const authenticated = useAuthenticated()
   const profile = useSelector(state => state.auth.profile)
-
   const { activePopover, showPopover, hidePopover } = usePopover()
+  const dispatch = useDispatch()
+  const handleLogout = () => dispatch(logout())
 
   return (
     <S.Navbar>
@@ -21,9 +23,9 @@ export default function Navbar() {
               <S.UserImage src="https://cf.shopee.vn/file/858368a93c885a4b6ca0d1b07eabad6c_tn" />
               <S.Username>{profile.name || profile.email}</S.Username>
               <Popover active={activePopover}>
-                <S.UserLink to="">Tài khoản của tôi</S.UserLink>
+                <S.UserLink to={path.user}>Tài khoản của tôi</S.UserLink>
                 <S.UserLink to="">Đơn mua</S.UserLink>
-                <S.UserButton>Đăng xuất</S.UserButton>
+                <S.UserButton onClick={handleLogout}>Đăng xuất</S.UserButton>
               </Popover>
             </S.User>
           </li>

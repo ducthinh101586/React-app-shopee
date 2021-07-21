@@ -1,24 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import authApi from '../../api/auth.api'
 import LocalStorage from '../../Constants/localStorage'
+import { payloadCreator } from '../../utils/helper'
 
-export const register = createAsyncThunk('auth/register', async (data, thunkAPI) => {
-  try {
-    const res = await authApi.register(data)
-    return res
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error)
-  }
-})
+export const register = createAsyncThunk('auth/register', payloadCreator(authApi.register))
 
-export const login = createAsyncThunk('auth/register', async (data, thunkAPI) => {
-  try {
-    const res = await authApi.login(data)
-    return res
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error)
-  }
-})
+export const login = createAsyncThunk('auth/login', payloadCreator(authApi.login))
+
+export const logout = createAsyncThunk('auth/logout', payloadCreator(authApi.logout))
 
 const handleAuthFulfilled = (state, action) => {
   const { user, access_token } = action.payload.data
@@ -34,7 +23,12 @@ const auth = createSlice({
   },
   extraReducers: {
     [register.fulfilled]: handleAuthFulfilled,
-    [login.fulfilled]: handleAuthFulfilled
+    [login.fulfilled]: handleAuthFulfilled,
+    [logout.fulfilled]: state => {
+      state.profile = {}
+      localStorage.removeItem(LocalStorage.user)
+      localStorage.removeItem(LocalStorage.accessToken)
+    }
   }
 })
 

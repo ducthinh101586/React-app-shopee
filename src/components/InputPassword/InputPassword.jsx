@@ -3,21 +3,21 @@ import * as S from './inputPassword.style'
 
 export default function InputPassword({ ...props }) {
   const [focus, setFocus] = useState(false)
-  const [visublePassword, setVisiblePassword] = useState(false)
+  const [visiblePassword, setVisiblePassword] = useState(false)
   const toggleVisiblePassword = () => {
-    setVisiblePassword(visublePassword => !visublePassword)
+    setVisiblePassword(visiblePassword => !visiblePassword)
   }
 
   return (
     <S.FormControl focus={focus}>
       <input
         {...props}
-        type={visublePassword ? 'text' : 'password'}
+        type={visiblePassword ? 'text' : 'password'}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       />
       <button type="button" onClick={toggleVisiblePassword} tabIndex="-1">
-        {visublePassword && (
+        {visiblePassword && (
           <svg fill="none" viewBox="0 0 20 12" className="stardust-icon stardust-icon-eye-open t5jqkM">
             <path
               stroke="none"
@@ -29,7 +29,7 @@ export default function InputPassword({ ...props }) {
             />
           </svg>
         )}
-        {!visublePassword && (
+        {!visiblePassword && (
           <svg fill="none" viewBox="0 0 20 10" className="stardust-icon stardust-icon-eye-shut _2nnXgl">
             <path
               stroke="none"
