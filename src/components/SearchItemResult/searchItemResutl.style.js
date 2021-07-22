@@ -82,10 +82,14 @@ export const ButtonControllerPrev = styled(ButtonController)`
   margin-left: 2rem;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  border-right: 1px silid #f2f2f2;
+  border-right: 1px solid #f2f2f2;
 `
 
 export const ButtonControllerNext = styled(ButtonController)`
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+`
+export const ProductList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
 `
