@@ -42,7 +42,7 @@ export const CategoryTitle = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   color: rgba(0, 0, 0, 0.8);
   display: flex;
-  align-item: center;
+  align-items: center;
   svg {
     width: 1.25rem;
     margin-right: 1rem;
