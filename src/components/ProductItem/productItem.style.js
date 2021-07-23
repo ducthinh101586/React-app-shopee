@@ -41,7 +41,7 @@ export const ProductItemInfo = styled.div`
 
 export const ProductItemTitle = styled.div`
   display: inline-block;
-  display: --webkit-box;
+  display: -webkit-box;
   word-wrap: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
