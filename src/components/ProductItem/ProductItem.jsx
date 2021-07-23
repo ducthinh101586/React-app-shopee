@@ -2,25 +2,28 @@ import { Link } from 'react-router-dom'
 import React from 'react'
 import * as S from './productItem.style'
 import ProductRating from '../ProductRating/ProductRating'
+import PropTypes from 'prop-types'
+import { path } from '../../Constants/path'
+import { formatK, formatMoney, generateNameId } from '../../utils/helper'
 
-export default function ProductItem() {
+export default function ProductItem({ product }) {
   return (
     <S.Product>
-      <Link to="">
+      <Link to={path.product + `/${generateNameId(product)}`}>
         <S.ProductItem>
           <S.ProductItemImage>
-            <img src="https://cf.shopee.vn/file/3e07638a8d13e0f877fd94df3fb2f849_tn" alt="" />
+            <img src={product.image} alt={product.name} />
           </S.ProductItemImage>
           <S.ProductItemInfo>
-            <S.ProductItemTitle>Bong bóng màu bánh macaron xinh xắn dùng để trang trí tiệc</S.ProductItemTitle>
+            <S.ProductItemTitle>{product.name}</S.ProductItemTitle>
             <S.ProductItemPrice>
-              <S.ProductItemOriginal>8.888 đ</S.ProductItemOriginal>
-              <S.ProductItemSale>0 đ</S.ProductItemSale>
+              <S.ProductItemOriginal>đ{formatMoney(product.price_before_discount)}</S.ProductItemOriginal>
+              <S.ProductItemSale>đ{formatMoney(product.price)}</S.ProductItemSale>
             </S.ProductItemPrice>
             <S.ProductItemMeta>
               <ProductRating />
               <S.ProductItemSold>
-                <span>1.7k</span>
+                <span>{formatK(product.sold)}</span>
                 <span>Đã bán</span>
               </S.ProductItemSold>
             </S.ProductItemMeta>
@@ -29,4 +32,7 @@ export default function ProductItem() {
       </Link>
     </S.Product>
   )
+}
+ProductItem.propTypes = {
+  product: PropTypes.object
 }

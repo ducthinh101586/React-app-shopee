@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import FilterPanel from '../../components/FilterPanel/FilterPanel'
 import SearchItemResult from '../../components/SearchItemResult/SearchItemResult'
-import { getCategories } from './home.slice'
+import { getCategories, getProducts } from './home.slice'
 import * as S from './home.style'
 
 export default function Home() {
   const [categories, setCategories] = useState([])
+  const [products, setProducts] = useState({})
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -18,6 +20,15 @@ export default function Home() {
       })
   }, [dispatch])
 
+  useEffect(() => {
+    const _getProduct = async () => {
+      const data = await dispatch(getProducts())
+      const res = unwrapResult(data)
+      setProducts(res.data)
+    }
+    _getProduct()
+  }, [dispatch])
+
   return (
     <div>
       <S.Container className="container">
@@ -25,7 +36,7 @@ export default function Home() {
           <FilterPanel categories={categories} />
         </S.Side>
         <S.Main>
-          <SearchItemResult />
+          <SearchItemResult products={products} />
         </S.Main>
       </S.Container>
     </div>
