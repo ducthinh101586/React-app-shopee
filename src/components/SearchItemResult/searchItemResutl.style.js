@@ -15,8 +15,8 @@ export const SortBarLabel = styled.span``
 export const SortByOptions = styled.div`
   display: flex;
   flex-wrap: wrap;
-  flex-grow: 1;
   align-items: center;
+  flex-grow: 1;
 `
 
 export const SortByOptionsOption = styled.div`
@@ -42,7 +42,7 @@ export const SortByPrice = styled.select`
   margin-left: 1rem;
   height: 3.25rem;
   border: 0;
-  padding: 1 1.5rem;
+  padding: 0 1.5rem;
   &.active {
     color: #ee4d2d;
   }
