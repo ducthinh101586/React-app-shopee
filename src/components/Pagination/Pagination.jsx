@@ -62,7 +62,7 @@ export default function Pagination({ pagination, filters }) {
             )
           } else if (type === 'next') {
             children = (
-              <S.ButtonIcon key={index} onClick={goToNext} disabled={(pagination.page = pagination.page_size)}>
+              <S.ButtonIcon key={index} onClick={goToNext} disabled={pagination.page === pagination.page_size}>
                 <svg
                   enableBackground="new 0 0 11 11"
                   viewBox="0 0 11 11"
