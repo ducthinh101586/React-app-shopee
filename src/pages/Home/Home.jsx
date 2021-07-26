@@ -3,14 +3,18 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import FilterPanel from '../../components/FilterPanel/FilterPanel'
 import SearchItemResult from '../../components/SearchItemResult/SearchItemResult'
+import useQuery from '../../hooks/useQuery'
 import { getCategories, getProducts } from './home.slice'
 import * as S from './home.style'
 
 export default function Home() {
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState({})
+  const [filters, setFilters] = useState({})
 
   const dispatch = useDispatch()
+
+  const query = useQuery()
 
   useEffect(() => {
     dispatch(getCategories())
@@ -21,19 +25,35 @@ export default function Home() {
   }, [dispatch])
 
   useEffect(() => {
+    const _filters = {
+      ...query,
+      page: query.page || 1,
+      limit: query.limit || 30
+    }
+    setFilters(_filters)
+
+    const params = {
+      page: _filters.page,
+      limit: _filters.limit,
+      category: _filters.category,
+      exclude: _filters.exclude,
+      rating_filter: _filters.rating,
+      price_max: _filters.maxPrice,
+      price_min: _filters.minPrice
+    }
     const _getProduct = async () => {
-      const data = await dispatch(getProducts())
+      const data = await dispatch(getProducts({ params }))
       const res = unwrapResult(data)
       setProducts(res.data)
     }
     _getProduct()
-  }, [dispatch])
+  }, [query, dispatch])
 
   return (
     <div>
       <S.Container className="container">
         <S.Side>
-          <FilterPanel categories={categories} />
+          <FilterPanel categories={categories} filters={filters} />
         </S.Side>
         <S.Main>
           <SearchItemResult products={products} />

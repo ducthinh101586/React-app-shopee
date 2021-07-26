@@ -1,12 +1,68 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { NavLink, useHistory } from 'react-router-dom'
 import { path } from '../../Constants/path'
 import RatingStars from '../RatingStars/RatingStars'
 import * as S from './filterPanel.style'
 import PropTypes from 'prop-types'
 import qs from 'query-string'
+import { Controller, useForm } from 'react-hook-form'
 
-export default function FilterPanel({ categories }) {
+export default function FilterPanel({ categories, filters }) {
+  const history = useHistory()
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+    clearErrors,
+    reset,
+    setValue
+  } = useForm({
+    defaultValues: {
+      minPrice: filters.minPrice || '',
+      maxPrice: filters.maxPrice || ''
+    },
+    reValidateMode: 'onSubmit'
+  })
+
+  useEffect(() => {
+    setValue('minPrice', filters.minPrice || '')
+    setValue('maxPrice', filters.maxPrice || '')
+  }, [setValue, filters])
+
+  const searchPrice = data => {
+    const { minPrice, maxPrice } = data
+    if (minPrice !== '' || maxPrice !== '') {
+      let _filters = filters
+      if (minPrice !== '') {
+        _filters = { ..._filters, minPrice }
+      } else {
+        delete _filters.minPrice
+      }
+      if (maxPrice !== '') {
+        _filters = { ..._filters, maxPrice }
+      } else {
+        delete _filters.maxPrice
+      }
+      history.push(path.home + `?${qs.stringify(_filters)}`)
+    }
+  }
+
+  const clearAll = () => {
+    reset()
+    history.push({ pathname: path.home })
+  }
+
+  const validPrice = () => {
+    const minPrice = getValues('minPrice')
+    const maxPrice = getValues('maxPrice')
+    const message = 'vui lòng điền khoảng giá phù hợp'
+    if (minPrice !== '' && maxPrice !== '') {
+      return Number(maxPrice) >= Number(minPrice) || message
+    }
+    return minPrice !== '' || maxPrice !== '' || message
+  }
+
   return (
     <div>
       <S.CategoryTitleLink to={path.home}>
@@ -61,25 +117,61 @@ export default function FilterPanel({ categories }) {
         <S.FilterGroupHeader>Khoảng giá</S.FilterGroupHeader>
         <S.PriceRange>
           <S.PriceRangeGroup>
-            <S.PriceRangeInput placeholder="từ" />
+            <Controller
+              name="minPrice"
+              control={control}
+              rules={{
+                validate: { validPrice }
+              }}
+              render={({ field }) => (
+                <S.PriceRangeInput
+                  placeholder="từ"
+                  onChange={value => {
+                    clearErrors()
+                    field.onChange(value)
+                  }}
+                  value={getValues('minPrice')}
+                />
+              )}
+            />
             <S.PriceRangeLine />
-            <S.PriceRangeInput placeholder="đến" />
+            <Controller
+              name="maxPrice"
+              control={control}
+              rules={{
+                validate: { validPrice }
+              }}
+              render={({ field }) => (
+                <S.PriceRangeInput
+                  placeholder="đến"
+                  onChange={value => {
+                    clearErrors()
+                    field.onChange(value)
+                  }}
+                  value={getValues('maxPrice')}
+                />
+              )}
+            />
           </S.PriceRangeGroup>
-          <S.PricErrorMessage>Vui lòng điền khoảng giá phù hợp</S.PricErrorMessage>
-          <S.PriceRangeButton>Áp dụng</S.PriceRangeButton>
+
+          {Object.values(errors).length !== 0 && (
+            <S.PricErrorMessage>Vui lòng điền khoảng giá phù hợp</S.PricErrorMessage>
+          )}
+          <S.PriceRangeButton onClick={handleSubmit(searchPrice)}>Áp dụng</S.PriceRangeButton>
         </S.PriceRange>
       </S.FilterGroup>
 
       <S.FilterGroup>
         <S.FilterGroupHeader>Đánh giá</S.FilterGroupHeader>
-        <RatingStars />
+        <RatingStars filters={filters} />
       </S.FilterGroup>
 
-      <S.RemoveFilterButton>Xoá tất cả</S.RemoveFilterButton>
+      <S.RemoveFilterButton onClick={clearAll}>Xoá tất cả</S.RemoveFilterButton>
     </div>
   )
 }
 
 FilterPanel.propTypes = {
-  categories: PropTypes.array.isRequired
+  categories: PropTypes.array.isRequired,
+  filters: PropTypes.object.isRequired
 }

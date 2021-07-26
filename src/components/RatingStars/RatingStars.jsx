@@ -1,13 +1,30 @@
 import React from 'react'
 import * as S from './ratingStars.style'
+import PropTypes from 'prop-types'
+import { useHistory } from 'react-router-dom'
+import { path } from '../../Constants/path'
+import qs from 'query-string'
+import classNames from 'classnames'
 
-export default function RatingStars() {
+export default function RatingStars({ filters }) {
+  const history = useHistory()
+  const searchRating = rating => {
+    const _filters = {
+      ...filters,
+      rating
+    }
+    history.push(path.home + `?${qs.stringify(_filters)}`)
+  }
   return (
     <div>
       {Array(5)
         .fill(0)
         .map((item, index) => (
-          <S.RatingStarsContainer key={index}>
+          <S.RatingStarsContainer
+            key={index}
+            onClick={() => searchRating(5 - index)}
+            className={classNames({ active: Number(filters.rating) === 5 - index })}
+          >
             {Array(5)
               .fill(0)
               .map((star, indexStar) => {
@@ -67,4 +84,8 @@ export default function RatingStars() {
         ))}
     </div>
   )
+}
+
+RatingStars.propTypes = {
+  filters: PropTypes.object.isRequired
 }

@@ -21,7 +21,7 @@ export default function ProductItem({ product }) {
               <S.ProductItemSale>đ{formatMoney(product.price)}</S.ProductItemSale>
             </S.ProductItemPrice>
             <S.ProductItemMeta>
-              <ProductRating />
+              <ProductRating rating={product.rating} />
               <S.ProductItemSold>
                 <span>{formatK(product.sold)}</span>
                 <span>Đã bán</span>
