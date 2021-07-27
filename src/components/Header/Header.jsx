@@ -1,11 +1,31 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../Navbar/Navbar'
 import usePopover from '../../hooks/usePopover'
 import * as S from './Header.style'
 import Popover from '../Popover/Popover'
+import { useHistory } from 'react-router-dom'
+import useQuery from '../../hooks/useQuery'
+import { path } from '../../Constants/path'
 
 export default function Header() {
   const { activePopover, hidePopover, showPopover } = usePopover()
+  const [searchValue, setSearchValue] = useState('')
+  const history = useHistory()
+  const query = useQuery()
+
+  useEffect(() => {
+    const { name = '' } = query
+    setSearchValue(name)
+  }, [query])
+
+  const onChangeSearch = event => {
+    setSearchValue(event.target.value)
+  }
+  const search = event => {
+    event.preventDefault()
+    history.push(path.home + `?name=${searchValue}`)
+  }
+
   return (
     <S.StyledHeader>
       <div className="container">
@@ -19,8 +39,8 @@ export default function Header() {
             </svg>
           </S.Logo>
 
-          <S.StyledForm>
-            <S.StyledInput placeholder="Tìm kiếm sản phẩm" />
+          <S.StyledForm onSubmit={search}>
+            <S.StyledInput placeholder="Tìm kiếm sản phẩm" value={searchValue} onChange={onChangeSearch} />
             <S.StyledButton type="submit">
               <svg height={19} viewBox="0 0 19 19" width={19} className="shopee-svg-icon ">
                 <g fillRule="evenodd" stroke="none" strokeWidth={1}>
