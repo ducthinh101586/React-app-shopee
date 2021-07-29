@@ -13,6 +13,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState()
   const [currentImage, setCurrentImage] = useState({})
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
+  const [quantity, setQuantity] = useState(1)
   const currentImages = useMemo(() => {
     if (product) {
       return product.images.slice(...currentIndexImages)
@@ -51,6 +52,8 @@ export default function ProductDetail() {
       setCurrentIndexImages(currentIndexImages => [currentIndexImages[0] + 1, currentIndexImages[1] + 1])
     }
   }
+
+  const handleChangeQuantity = value => setQuantity(value)
 
   return (
     <div>
@@ -117,7 +120,7 @@ export default function ProductDetail() {
               <S.ProductBuyQuantity>
                 <S.ProductBuyQuantityTitle>Số Lượng</S.ProductBuyQuantityTitle>
                 <S.ProductBuyQuantityController>
-                  <ProductQuantityController />
+                  <ProductQuantityController value={quantity} max={product.quantity} onChange={handleChangeQuantity} />
                 </S.ProductBuyQuantityController>
                 <S.ProductQuantityQuantity>{product.quantity} sản phẩm có sẵn</S.ProductQuantityQuantity>
               </S.ProductBuyQuantity>

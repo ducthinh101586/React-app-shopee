@@ -13,5 +13,5 @@ export default function BaseInputNumber({ onChange, value, ...props }) {
 
 BaseInputNumber.propTypes = {
   onChange: PropTypes.func,
-  value: PropTypes.string
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }
