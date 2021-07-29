@@ -6,9 +6,10 @@ import { useParams } from 'react-router-dom'
 import ProductQuantityController from '../../components/ProductQuantityController/ProductQuantityController'
 import ProductRating from '../../components/ProductRating/ProductRating'
 import { formatK, formatMoney, getIdFromNameId, rateSale } from '../../utils/helper'
-import { getProductDetail } from './productDetail.slice'
+import { addToCart, getProductDetail } from './productDetail.slice'
 import * as S from './productDetail.style'
 import DOMPurify from 'dompurify'
+import { toast } from 'react-toastify'
 
 export default function ProductDetail() {
   const [product, setProduct] = useState()
@@ -55,6 +56,21 @@ export default function ProductDetail() {
   }
 
   const handleChangeQuantity = value => setQuantity(value)
+
+  const handleAddToCart = () => {
+    const body = {
+      product_id: product._id,
+      buy_count: quantity
+    }
+    dispatch(addToCart(body))
+      .then(unwrapResult)
+      .then(res => {
+        toast.success(res.message, {
+          position: 'top-center',
+          autoClose: 4000
+        })
+      })
+  }
 
   return (
     <div>
@@ -125,7 +141,7 @@ export default function ProductDetail() {
                 </S.ProductBuyQuantityController>
                 <S.ProductQuantityQuantity>{product.quantity} sản phẩm có sẵn</S.ProductQuantityQuantity>
               </S.ProductBuyQuantity>
-              <S.ProductButton>
+              <S.ProductButton onClick={handleAddToCart}>
                 <svg
                   enableBackground="new 0 0 15 15"
                   viewBox="0 0 15 15"
