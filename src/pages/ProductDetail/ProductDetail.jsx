@@ -8,6 +8,7 @@ import ProductRating from '../../components/ProductRating/ProductRating'
 import { formatK, formatMoney, getIdFromNameId, rateSale } from '../../utils/helper'
 import { getProductDetail } from './productDetail.slice'
 import * as S from './productDetail.style'
+import DOMPurify from 'dompurify'
 
 export default function ProductDetail() {
   const [product, setProduct] = useState()
@@ -155,7 +156,9 @@ export default function ProductDetail() {
 
           <S.ProductContent>
             <S.ProductContentHeading>Mô Tả Sản Phẩm</S.ProductContentHeading>
-            <S.ProductContentDetail></S.ProductContentDetail>
+            <S.ProductContentDetail
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}
+            ></S.ProductContentDetail>
           </S.ProductContent>
         </div>
       )}
