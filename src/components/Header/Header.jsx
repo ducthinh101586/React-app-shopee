@@ -6,12 +6,15 @@ import Popover from '../Popover/Popover'
 import { useHistory } from 'react-router-dom'
 import useQuery from '../../hooks/useQuery'
 import { path } from '../../Constants/path'
+import { useSelector } from 'react-redux'
+import { formatMoney } from '../../utils/helper'
 
 export default function Header() {
   const { activePopover, hidePopover, showPopover } = usePopover()
   const [searchValue, setSearchValue] = useState('')
   const history = useHistory()
   const query = useQuery()
+  const purchases = useSelector(state => state.cart.purchases)
 
   useEffect(() => {
     const { name = '' } = query
@@ -73,21 +76,22 @@ export default function Header() {
                   <circle cx="10.7" cy={23} r="2.2" stroke="none" />
                   <circle cx="19.7" cy={23} r="2.2" stroke="none" />
                 </svg>
-                <S.CartNumberBadge>5</S.CartNumberBadge>
+                {purchases.length > 0 && <S.CartNumberBadge>{purchases.length}</S.CartNumberBadge>}
               </S.CartIcon>
               <Popover active={activePopover}>
                 <S.PopoverContent>
                   <S.PopoverTitle>Sản phẩm mới thêm</S.PopoverTitle>
-                  <S.MiniProductCart>
-                    <S.MiniProductCartImg src="https://cf.shopee.vn/file/79f7122f9ee8244d8f838d36200056f9_tn" />
-                    <S.MiniProductCartTitle>
-                      Smart Tivi Samsung Crystal UHD 4K 50 inch UA50AU9000KXXV - Miễn phí lắp đặt
-                    </S.MiniProductCartTitle>
-                    <S.MiniProductCartPrice>15000000đ</S.MiniProductCartPrice>
-                  </S.MiniProductCart>
+                  {purchases.slice(0, 5).map(purchase => (
+                    <S.MiniProductCart key={purchase._id}>
+                      <S.MiniProductCartImg src={purchase.product.image} />
+                      <S.MiniProductCartTitle>{purchase.product.name}</S.MiniProductCartTitle>
+                      <S.MiniProductCartPrice>đ{formatMoney(purchase.product.price)}</S.MiniProductCartPrice>
+                    </S.MiniProductCart>
+                  ))}
+
                   <S.PopoverFooter>
                     <S.MoreProduct>
-                      <span>1 Thêm sản phẩm vào giỏ</span>
+                      {purchases > 5 && <span>{purchases.length - 5} Thêm sản phẩm vào giỏ</span>}
                     </S.MoreProduct>
                     <S.ButtonShowCart to="/">Xem giỏ hàng</S.ButtonShowCart>
                   </S.PopoverFooter>

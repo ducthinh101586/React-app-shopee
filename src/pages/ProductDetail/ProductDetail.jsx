@@ -10,6 +10,7 @@ import { addToCart, getProductDetail } from './productDetail.slice'
 import * as S from './productDetail.style'
 import DOMPurify from 'dompurify'
 import { toast } from 'react-toastify'
+import { getCartPurchases } from '../Cart/cart.slice'
 
 export default function ProductDetail() {
   const [product, setProduct] = useState()
@@ -57,19 +58,17 @@ export default function ProductDetail() {
 
   const handleChangeQuantity = value => setQuantity(value)
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const body = {
       product_id: product._id,
       buy_count: quantity
     }
-    dispatch(addToCart(body))
-      .then(unwrapResult)
-      .then(res => {
-        toast.success(res.message, {
-          position: 'top-center',
-          autoClose: 4000
-        })
-      })
+    const res = await dispatch(addToCart(body)).then(unwrapResult)
+    await dispatch(getCartPurchases()).then(unwrapResult)
+    toast.success(res.message, {
+      position: 'top-center',
+      autoClose: 4000
+    })
   }
 
   return (
