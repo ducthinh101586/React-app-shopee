@@ -1,7 +1,6 @@
 import React from 'react'
 import * as S from './productQuantityController.style'
 import PropTypes from 'prop-types'
-
 export default function ProductQuantityController({
   onChange,
   onIncrease,

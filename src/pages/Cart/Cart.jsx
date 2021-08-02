@@ -5,7 +5,9 @@ import ProductQuantityController from '../../components/ProductQuantityControlle
 import { useDispatch, useSelector } from 'react-redux'
 import { formatMoney } from '../../utils/helper'
 import { createNextState, unwrapResult } from '@reduxjs/toolkit'
-import { getCartPurchases, updatePurchase } from './cart.slice'
+import { deletePurchases, getCartPurchases, updatePurchase } from './cart.slice'
+import { toast } from 'react-toastify'
+import { format } from 'prettier'
 
 export default function Cart() {
   const purchases = useSelector(state => state.cart.purchases)
@@ -19,6 +21,16 @@ export default function Cart() {
   )
 
   const dispatch = useDispatch()
+  const isCheckedAll = localPurchases.every(purchase => purchase.checked)
+  const checkedPurchases = localPurchases.filter(purchase => purchase.checked)
+  const totalCheckedPurchases = checkedPurchases.length
+  const totalCheckedPurchasesPrice = checkedPurchases.reduce((result, current) => {
+    return result + current.product.price * current.buy_count
+  }, 0)
+
+  const totalCheckedPurchasesSavingPrice = checkedPurchases.reduce((result, current) => {
+    return (result + current.product.price_before_discount - current.product.price) * current.buy_count
+  }, 0)
 
   const handleInputQuantity = indexPurchase => value => {
     const newLocalPurchases = createNextState(localPurchases, draft => {
@@ -60,6 +72,44 @@ export default function Cart() {
     )
   }
 
+  const handleRemove = indexPurchase => async () => {
+    const purchase_id = localPurchases[indexPurchase]._id
+    await dispatch(deletePurchases([purchase_id])).then(unwrapResult)
+    await dispatch(getCartPurchases()).then(unwrapResult)
+    toast.success('xoá đơn thành công', {
+      position: 'top-center',
+      autoClose: 2000
+    })
+  }
+
+  const handleRemoveManyPurchases = async () => {
+    const purchase_ids = checkedPurchases.map(purchase => purchase._id)
+    await dispatch(deletePurchases(purchase_ids)).then(unwrapResult)
+    await dispatch(getCartPurchases()).then(unwrapResult)
+    toast.success('xoá đơn thành công', {
+      position: 'top-center',
+      autoClose: 2000
+    })
+  }
+
+  const handleCheck = indexPurchase => value => {
+    setLocalPurchases(localPurchases =>
+      createNextState(localPurchases, draft => {
+        draft[indexPurchase].checked = value
+      })
+    )
+  }
+
+  const handleCheckAll = () => {
+    setLocalPurchases(localPurchases =>
+      createNextState(localPurchases, draft => {
+        draft.forEach(purchase => {
+          purchase.checked = !isCheckedAll
+        })
+      })
+    )
+  }
+
   useEffect(() => {
     setLocalPurchases(
       createNextState(purchases, draft => {
@@ -75,7 +125,7 @@ export default function Cart() {
       <div>
         <S.ProductHeader>
           <S.ProductHeaderCheckbox>
-            <Checkbox />
+            <Checkbox onChange={handleCheckAll} checked={isCheckedAll} />
           </S.ProductHeaderCheckbox>
           <S.ProductHeaderName>Sản Phẩm</S.ProductHeaderName>
           <S.ProductHeaderUnitPrice>Đơn Giá</S.ProductHeaderUnitPrice>
@@ -87,7 +137,7 @@ export default function Cart() {
           {localPurchases.map((purchase, index) => (
             <S.CartItem key={purchase._id}>
               <S.CartItemCheckbox>
-                <Checkbox />
+                <Checkbox checked={purchase.checked} onChange={handleCheck(index)} />
               </S.CartItemCheckbox>
               <S.CartItemOverView>
                 <S.CartItemOverViewImage to="">
@@ -116,26 +166,26 @@ export default function Cart() {
                 <span>đ{formatMoney(purchase.product.price * purchase.buy_count)}</span>
               </S.CartItemTotalPrice>
               <S.CartItemAction></S.CartItemAction>
-              <S.CartItemActionButton>Xoá</S.CartItemActionButton>
+              <S.CartItemActionButton onClick={handleRemove(index)}>Xoá</S.CartItemActionButton>
             </S.CartItem>
           ))}
         </S.ProductSection>
       </div>
       <S.CartFooter>
         <S.CartFooterCheckbox>
-          <Checkbox />
+          <Checkbox onChange={handleCheckAll} checked={isCheckedAll} />
         </S.CartFooterCheckbox>
-        <S.CartFooterButton>Chọn tất cả({purchases.length})</S.CartFooterButton>
-        <S.CartFooterButton>Xoá</S.CartFooterButton>
+        <S.CartFooterButton onClick={handleCheckAll}>Chọn tất cả({purchases.length})</S.CartFooterButton>
+        <S.CartFooterButton onClick={handleRemoveManyPurchases}>Xoá</S.CartFooterButton>
         <S.CartFooterSpaceBetween />
         <S.CartFooterPrice>
           <S.CartFooterPriceTop>
-            <div>Tổng Thanh toán({purchases.length} sản phẩm)</div>
-            <div>đ20000</div>
+            <div>Tổng Thanh toán({totalCheckedPurchases} sản phẩm)</div>
+            <div>đ{formatMoney(totalCheckedPurchasesPrice)}</div>
           </S.CartFooterPriceTop>
           <S.CartFooterPriceBot>
             <div>Tiết Kiệm</div>
-            <div>đ2000</div>
+            <div>đ{formatMoney(totalCheckedPurchasesSavingPrice)}</div>
           </S.CartFooterPriceBot>
         </S.CartFooterPrice>
         <S.CartFooterCheckout>mua hàng</S.CartFooterCheckout>

@@ -67,7 +67,7 @@ export default function ProductDetail() {
     await dispatch(getCartPurchases()).then(unwrapResult)
     toast.success(res.message, {
       position: 'top-center',
-      autoClose: 4000
+      autoClose: 2000
     })
   }
 

@@ -16,6 +16,13 @@ const purchaseApi = {
   },
   updatePurchase(data) {
     return http.put(`${URL}/update-purchase`, data)
+  },
+
+  deletePurchases(data) {
+    return http.delete(`${URL}`, data)
+  },
+  buyPurchases(data) {
+    return http.post(`${URL}/buy-products`, data)
   }
 }
 
