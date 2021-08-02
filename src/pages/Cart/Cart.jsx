@@ -1,12 +1,75 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Checkbox from '../../components/Checkbox/Checkbox'
 import * as S from './cart.style'
 import ProductQuantityController from '../../components/ProductQuantityController/ProductQuantityController'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { formatMoney } from '../../utils/helper'
+import { createNextState, unwrapResult } from '@reduxjs/toolkit'
+import { getCartPurchases, updatePurchase } from './cart.slice'
 
 export default function Cart() {
   const purchases = useSelector(state => state.cart.purchases)
+  const [localPurchases, setLocalPurchases] = useState(() =>
+    createNextState(purchases, draft => {
+      draft.forEach(purchase => {
+        purchase.disabled = false
+        purchase.checked = false
+      })
+    })
+  )
+
+  const dispatch = useDispatch()
+
+  const handleInputQuantity = indexPurchase => value => {
+    const newLocalPurchases = createNextState(localPurchases, draft => {
+      draft[indexPurchase].buy_count = value
+    })
+    setLocalPurchases(newLocalPurchases)
+  }
+
+  const handleBlurQuantity = indexPurchase => async value => {
+    const purchase = localPurchases[indexPurchase]
+    setLocalPurchases(loclalPurchases =>
+      createNextState(loclalPurchases, draft => {
+        draft[indexPurchase].disabled = true
+      })
+    )
+    await dispatch(updatePurchase({ product_id: purchase.product._id, buy_count: value })).then(unwrapResult)
+    await dispatch(getCartPurchases()).then(unwrapResult)
+    setLocalPurchases(loclalPurchases =>
+      createNextState(loclalPurchases, draft => {
+        draft[indexPurchase].disabled = false
+      })
+    )
+  }
+
+  const handleIncreaseAndDecrease = indexPurchase => async value => {
+    const purchase = localPurchases[indexPurchase]
+    setLocalPurchases(loclalPurchases =>
+      createNextState(loclalPurchases, draft => {
+        draft[indexPurchase].disabled = true
+        draft[indexPurchase].buy_count = value
+      })
+    )
+    await dispatch(updatePurchase({ product_id: purchase.product._id, buy_count: value })).then(unwrapResult)
+    await dispatch(getCartPurchases()).then(unwrapResult)
+    setLocalPurchases(loclalPurchases =>
+      createNextState(loclalPurchases, draft => {
+        draft[indexPurchase].disabled = false
+      })
+    )
+  }
+
+  useEffect(() => {
+    setLocalPurchases(
+      createNextState(purchases, draft => {
+        draft.forEach(purchase => {
+          purchase.disabled = false
+        })
+      })
+    )
+  }, [purchases])
+
   return (
     <div className="container">
       <div>
@@ -21,13 +84,13 @@ export default function Cart() {
           <S.ProductHeaderAction>Thao tác</S.ProductHeaderAction>
         </S.ProductHeader>
         <S.ProductSection>
-          {purchases.map(purchase => (
+          {localPurchases.map((purchase, index) => (
             <S.CartItem key={purchase._id}>
               <S.CartItemCheckbox>
                 <Checkbox />
               </S.CartItemCheckbox>
               <S.CartItemOverView>
-                <S.CartItemOverViewImage to="/">
+                <S.CartItemOverViewImage to="">
                   <img src={purchase.product.image} alt="" />
                 </S.CartItemOverViewImage>
                 <S.CartItemOverViewNameWrapper>
@@ -39,7 +102,15 @@ export default function Cart() {
                 <span>đ{formatMoney(purchase.product.price)}</span>
               </S.CartItemUnitPrice>
               <S.CartItemQuantity>
-                <ProductQuantityController max={purchase.product.quantity} value={purchase.buy_count} />
+                <ProductQuantityController
+                  max={purchase.product.quantity}
+                  value={purchase.buy_count}
+                  disabled={purchase.disabled}
+                  onInput={handleInputQuantity(index)}
+                  onBlur={handleBlurQuantity(index)}
+                  onIncrease={handleIncreaseAndDecrease(index)}
+                  onDecrease={handleIncreaseAndDecrease(index)}
+                />
               </S.CartItemQuantity>
               <S.CartItemTotalPrice>
                 <span>đ{formatMoney(purchase.product.price * purchase.buy_count)}</span>

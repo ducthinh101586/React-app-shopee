@@ -7,12 +7,15 @@ const purchaseApi = {
   addToCart(data) {
     return http.post(`${URL}/add-to-cart`, data)
   },
-  getCartPurchases(data) {
+  getCartPurchases() {
     return http.get(URL, {
       params: {
         status: purchaseStatus.incart
       }
     })
+  },
+  updatePurchase(data) {
+    return http.put(`${URL}/update-purchase`, data)
   }
 }
 
