@@ -5,9 +5,9 @@ import ProductQuantityController from '../../components/ProductQuantityControlle
 import { useDispatch, useSelector } from 'react-redux'
 import { formatMoney } from '../../utils/helper'
 import { createNextState, unwrapResult } from '@reduxjs/toolkit'
-import { deletePurchases, getCartPurchases, updatePurchase } from './cart.slice'
+import { buyPurchases, deletePurchases, getCartPurchases, updatePurchase } from './cart.slice'
 import { toast } from 'react-toastify'
-import { format } from 'prettier'
+import keyBy from 'lodash/keyBy'
 
 export default function Cart() {
   const purchases = useSelector(state => state.cart.purchases)
@@ -78,7 +78,7 @@ export default function Cart() {
     await dispatch(getCartPurchases()).then(unwrapResult)
     toast.success('xoá đơn thành công', {
       position: 'top-center',
-      autoClose: 2000
+      autoClose: 1500
     })
   }
 
@@ -88,7 +88,7 @@ export default function Cart() {
     await dispatch(getCartPurchases()).then(unwrapResult)
     toast.success('xoá đơn thành công', {
       position: 'top-center',
-      autoClose: 2000
+      autoClose: 1500
     })
   }
 
@@ -110,14 +110,31 @@ export default function Cart() {
     )
   }
 
+  const handleBuyPurchases = async () => {
+    if (checkedPurchases.length > 0) {
+      const body = checkedPurchases.map(purchase => ({
+        product_id: purchase.product._id,
+        buy_count: purchase.buy_count
+      }))
+      await dispatch(buyPurchases(body)).then(unwrapResult)
+      await dispatch(getCartPurchases()).then(unwrapResult)
+      toast.success('Đặt hàng thành công', {
+        position: 'top-center',
+        autoClose: 1500
+      })
+    }
+  }
+
   useEffect(() => {
-    setLocalPurchases(
-      createNextState(purchases, draft => {
+    setLocalPurchases(localPurchases => {
+      const localPurchasesObject = keyBy(localPurchases, '_id')
+      return createNextState(purchases, draft => {
         draft.forEach(purchase => {
           purchase.disabled = false
+          purchase.checked = Boolean(localPurchasesObject[purchase._id]?.checked)
         })
       })
-    )
+    })
   }, [purchases])
 
   return (
@@ -140,7 +157,7 @@ export default function Cart() {
                 <Checkbox checked={purchase.checked} onChange={handleCheck(index)} />
               </S.CartItemCheckbox>
               <S.CartItemOverView>
-                <S.CartItemOverViewImage to="">
+                <S.CartItemOverViewImage to="/">
                   <img src={purchase.product.image} alt="" />
                 </S.CartItemOverViewImage>
                 <S.CartItemOverViewNameWrapper>
@@ -188,7 +205,7 @@ export default function Cart() {
             <div>đ{formatMoney(totalCheckedPurchasesSavingPrice)}</div>
           </S.CartFooterPriceBot>
         </S.CartFooterPrice>
-        <S.CartFooterCheckout>mua hàng</S.CartFooterCheckout>
+        <S.CartFooterCheckout onClick={handleBuyPurchases}>mua hàng</S.CartFooterCheckout>
       </S.CartFooter>
     </div>
   )

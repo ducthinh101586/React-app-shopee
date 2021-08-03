@@ -20,7 +20,7 @@ class Http {
         if (response.status === 401) {
           toast.error(response.data.message, {
             posittion: 'top-center',
-            autoClose: 2000
+            autoClose: 1500
           })
         }
         const result = { ...response.data, status: response.status }
