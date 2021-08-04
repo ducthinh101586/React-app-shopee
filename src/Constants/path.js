@@ -6,8 +6,17 @@ export const path = {
   productDetail: '/product/:idProduct',
   cart: '/cart',
   user: '/user',
-  profile: '/user/profile',
-  password: '/user/password',
-  purchase: '/user/purchase',
+  get profile() {
+    return this.user + '/profile'
+  },
+
+  get password() {
+    return this.user + '/password'
+  },
+
+  get purchase() {
+    return this.user + '/purchase'
+  },
+
   notfound: '*'
 }

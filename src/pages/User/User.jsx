@@ -1,6 +1,10 @@
 import React from 'react'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import { path } from '../../Constants/path'
 import * as S from './user.style'
+import Profile from './Profile/Profile'
+import Password from './Password/Password'
+import Purchase from './Purchase/Purchase'
 
 export default function User() {
   return (
@@ -54,7 +58,22 @@ export default function User() {
             </S.SidebarMenuEntry>
           </S.SidebarMenu>
         </S.Sidebar>
-        <S.Main></S.Main>
+        <S.Main>
+          <Switch>
+            <Route path={path.user} exact>
+              <Redirect to={path.profile} />
+            </Route>
+            <Route path={path.profile}>
+              <Profile />
+            </Route>
+            <Route path={path.password}>
+              <Password />
+            </Route>
+            <Route path={path.purchase}>
+              <Purchase />
+            </Route>
+          </Switch>
+        </S.Main>
       </S.Container>
     </div>
   )
