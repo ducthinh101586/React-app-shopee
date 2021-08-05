@@ -70,6 +70,7 @@ export const Submit = styled.div`
 export const ButtonSubmit = styled(Button)`
   height: 4rem;
   min-width: 7rem;
+  margin-left: 4rem;
 `
 export const ProfileRight = styled.div`
   width: 28rem;
