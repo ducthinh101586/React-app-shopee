@@ -3,7 +3,7 @@ import purchaseApi from '../../api/purchase.api'
 import { payloadCreator } from '../../utils/helper'
 import { logout } from '../Auth/auth.slice'
 
-export const getCartPurchases = createAsyncThunk('cart/getCartPachases', payloadCreator(purchaseApi.getCartPurchases))
+export const getCartPurchases = createAsyncThunk('cart/getCartPurchases', payloadCreator(purchaseApi.getCartPurchases))
 
 export const updatePurchase = createAsyncThunk('cart/updatePurchase', payloadCreator(purchaseApi.updatePurchase))
 

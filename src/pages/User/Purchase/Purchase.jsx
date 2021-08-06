@@ -1,44 +1,100 @@
-import React from 'react'
+import { unwrapResult } from '@reduxjs/toolkit'
+import React, { useEffect, useState } from 'react'
+import { useMemo } from 'react'
+import { useDispatch } from 'react-redux'
+import { path } from '../../../Constants/path'
+import { purchaseStatus } from '../../../Constants/status'
+import useQuery from '../../../hooks/useQuery'
+import { getPurchases } from '../user.slice'
+import qs from 'query-string'
 import * as S from './purchase.style'
+import { formatMoney, generateNameId } from '../../../utils/helper'
 
 export default function Purchase() {
+  const [purchases, setPurchases] = useState([])
+
+  const dispatch = useDispatch()
+
+  const query = useQuery()
+
+  const status = useMemo(() => query.status || purchaseStatus.all, [query])
+
+  useEffect(() => {
+    dispatch(getPurchases(status))
+      .then(unwrapResult)
+      .then(res => {
+        setPurchases(res.data)
+      })
+  }, [status, dispatch])
+
+  const handleActive = value => () => Number(value) === Number(status)
+
   return (
     <div>
       <S.PurchaseTabs>
-        <S.PurchaseTabItem to="">Tất cả</S.PurchaseTabItem>
+        <S.PurchaseTabItem to={path.purchase} isActive={handleActive(purchaseStatus.all)}>
+          Tất cả
+        </S.PurchaseTabItem>
 
-        <S.PurchaseTabItem to="">Chờ xác nhận</S.PurchaseTabItem>
+        <S.PurchaseTabItem
+          to={{ pathName: path.Purchase, search: `?${qs.stringify({ status: purchaseStatus.waitForConfirmation })}` }}
+          isActive={handleActive(purchaseStatus.waitForConfirmation)}
+        >
+          Chờ xác nhận
+        </S.PurchaseTabItem>
 
-        <S.PurchaseTabItem to="">Chờ lấy hàng</S.PurchaseTabItem>
+        <S.PurchaseTabItem
+          to={{ pathName: path.Purchase, search: `?${qs.stringify({ status: purchaseStatus.waitForGetting })}` }}
+          isActive={handleActive(purchaseStatus.waitForGetting)}
+        >
+          Chờ lấy hàng
+        </S.PurchaseTabItem>
 
-        <S.PurchaseTabItem to="">Đang giao</S.PurchaseTabItem>
+        <S.PurchaseTabItem
+          to={{ pathName: path.Purchase, search: `?${qs.stringify({ status: purchaseStatus.inProgress })}` }}
+          isActive={handleActive(purchaseStatus.inProgress)}
+        >
+          Đang giao
+        </S.PurchaseTabItem>
 
-        <S.PurchaseTabItem to="">Đã giao</S.PurchaseTabItem>
+        <S.PurchaseTabItem
+          to={{ pathName: path.Purchase, search: `?${qs.stringify({ status: purchaseStatus.delivered })}` }}
+          isActive={handleActive(purchaseStatus.delivered)}
+        >
+          Đã giao
+        </S.PurchaseTabItem>
 
-        <S.PurchaseTabItem to="">Đã Huỷ</S.PurchaseTabItem>
+        <S.PurchaseTabItem
+          to={{ pathName: path.Purchase, search: `?${qs.stringify({ status: purchaseStatus.cancelled })}` }}
+          isActive={handleActive(purchaseStatus.cancelled)}
+        >
+          Đã Huỷ
+        </S.PurchaseTabItem>
       </S.PurchaseTabs>
       <S.PurchaseList>
-        <S.OrderCart>
-          <S.OrderCartContent>
-            <S.OrderCartDetail>
-              <img src="https://cf.shopee.vn/file/35cc62f31659de127a77af068f6bab9d_tn" alt="" />
-              <S.OrderContent>
-                <S.OrderName>Băng Đô Cài Tóc Hình Cá Mập Xinh Xắn</S.OrderName>
-                <S.OrderQuantity>x 1</S.OrderQuantity>
-              </S.OrderContent>
-            </S.OrderCartDetail>
-            <S.OrderCartPrice>đ2000</S.OrderCartPrice>
-          </S.OrderCartContent>
-          <S.OrderCartButtonsContaner>
-            <S.PurchaseButton light={1} to="">
-              Xem sản phẩm
-            </S.PurchaseButton>
-            <S.TotalPrice>
-              <S.TotalPricelabel>Tổng giá tiền</S.TotalPricelabel>
-              <S.TotalPricePrice>đ2000</S.TotalPricePrice>
-            </S.TotalPrice>
-          </S.OrderCartButtonsContaner>
-        </S.OrderCart>
+        {purchases.map(purchase => (
+          <S.OrderCart key={purchase._id}>
+            <S.OrderCartContent>
+              <S.OrderCartDetail>
+                <img src={purchase.product.image} alt="" />
+                <S.OrderContent>
+                  <S.OrderName>{purchase.product.name}</S.OrderName>
+                  <S.OrderQuantity>x {purchase.product.buy_count}</S.OrderQuantity>
+                </S.OrderContent>
+              </S.OrderCartDetail>
+              <S.OrderCartPrice>đ{formatMoney(purchase.product.price)}</S.OrderCartPrice>
+            </S.OrderCartContent>
+            <S.OrderCartButtonsContaner>
+              <S.PurchaseButton light={1} to={path.product + `/${generateNameId(purchase.product)}`}>
+                Xem sản phẩm
+              </S.PurchaseButton>
+              <S.TotalPrice>
+                <S.TotalPricelabel>Tổng giá tiền</S.TotalPricelabel>
+                <S.TotalPricePrice>đ{formatMoney(purchase.product.price * purchase.buy_count)}</S.TotalPricePrice>
+              </S.TotalPrice>
+            </S.OrderCartButtonsContaner>
+          </S.OrderCart>
+        ))}
       </S.PurchaseList>
     </div>
   )
