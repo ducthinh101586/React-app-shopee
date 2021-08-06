@@ -50,6 +50,11 @@ export const InputLabelContent = styled.div`
   width: 80%;
   padding-left: 2rem;
 `
+export const ErrorMessage = styled.div`
+  width: 100%;
+  padding-left: calc(20% + 2rem);
+`
+
 export const DateSelect = styled.div`
   display: flex;
   padding-left: 2rem;
