@@ -4,14 +4,17 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { HelmetProvider } from 'react-helmet-async'
 import store from './store'
-import i18n from './i18n/i18n'
+import './i18n/i18n'
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

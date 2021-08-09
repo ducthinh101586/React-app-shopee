@@ -8,6 +8,7 @@ import { createNextState, unwrapResult } from '@reduxjs/toolkit'
 import { buyPurchases, deletePurchases, getCartPurchases, updatePurchase } from './cart.slice'
 import { toast } from 'react-toastify'
 import keyBy from 'lodash/keyBy'
+import { Helmet } from 'react-helmet-async'
 
 export default function Cart() {
   const purchases = useSelector(state => state.cart.purchases)
@@ -139,6 +140,9 @@ export default function Cart() {
 
   return (
     <div className="container">
+      <Helmet>
+        <title>Giỏ Hàng</title>
+      </Helmet>
       <div>
         <S.ProductHeader>
           <S.ProductHeaderCheckbox>

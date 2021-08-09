@@ -6,6 +6,7 @@ import SearchItemResult from '../../components/SearchItemResult/SearchItemResult
 import useQuery from '../../hooks/useQuery'
 import { getCategories, getProducts } from './home.slice'
 import * as S from './home.style'
+import { Helmet } from 'react-helmet-async'
 
 export default function Home() {
   const [categories, setCategories] = useState([])
@@ -58,6 +59,9 @@ export default function Home() {
 
   return (
     <div>
+      <Helmet>
+        <title>Shopee Việt Nam | mua bán trên ứng dụng di động hoặc Website</title>
+      </Helmet>
       <S.Container className="container">
         <S.Side>
           <FilterPanel categories={categories} filters={filters} />

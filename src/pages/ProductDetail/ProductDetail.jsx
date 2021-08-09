@@ -11,6 +11,7 @@ import * as S from './productDetail.style'
 import DOMPurify from 'dompurify'
 import { toast } from 'react-toastify'
 import { getCartPurchases } from '../Cart/cart.slice'
+import { Helmet } from 'react-helmet-async'
 
 export default function ProductDetail() {
   const [product, setProduct] = useState()
@@ -75,6 +76,9 @@ export default function ProductDetail() {
     <div>
       {product && (
         <div className="container">
+          <Helmet>
+            <title>{product.name}</title>
+          </Helmet>
           <S.ProductBriefing>
             <S.ProductImages>
               <S.ProductImageActive>
