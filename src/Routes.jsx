@@ -1,38 +1,45 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { path } from './Constants/path'
-import Home from './pages/Home/Home'
-import Login from './pages/Auth/Login/Login'
-import Register from './pages/Auth/Register/Register'
-import NotFound from './pages/NotFound/NotFound'
 import RegisterLayout from './layouts/RegisterLayout/RegisterLayout'
 import MainLayout from './layouts/MainLayout/MainLayout'
 import UnauthenticatedGuard from './guards/UnauthenticatedGuard'
-import User from './pages/User/User'
 import AuthenticatedGuard from './guards/AuthenticatedGuard'
-import ProductDetail from './pages/ProductDetail/ProductDetail'
 import CartLayout from './layouts/CartLayout/CartLayout'
-import Cart from './pages/Cart/Cart'
+import Loading from './components/Loading/Loading'
+const Home = lazy(() => import('./pages/Home/Home'))
+const ProductDetail = lazy(() => import('./pages/ProductDetail/ProductDetail'))
+const User = lazy(() => import('./pages/User/User'))
+const Cart = lazy(() => import('./pages/Cart/Cart'))
+const Register = lazy(() => import('./pages/Auth/Register/Register'))
+const Login = lazy(() => import('./pages/Auth/Login/Login'))
+const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 
 export default function Routes() {
   return (
     <Switch>
       <Route path={path.home} exact>
         <MainLayout>
-          <Home />
+          <Suspense fallback={<Loading />}>
+            <Home />
+          </Suspense>
         </MainLayout>
       </Route>
 
       <Route path={path.productDetail}>
         <MainLayout>
-          <ProductDetail />
+          <Suspense fallback={<Loading />}>
+            <ProductDetail />
+          </Suspense>
         </MainLayout>
       </Route>
 
       <Route path={path.login}>
         <UnauthenticatedGuard>
           <RegisterLayout title="Đăng nhập">
-            <Login />
+            <Suspense fallback={<Loading />}>
+              <Login />
+            </Suspense>
           </RegisterLayout>
         </UnauthenticatedGuard>
       </Route>
@@ -40,7 +47,9 @@ export default function Routes() {
       <Route path={path.register}>
         <UnauthenticatedGuard>
           <RegisterLayout title="Đăng ký">
-            <Register />
+            <Suspense fallback={<Loading />}>
+              <Register />
+            </Suspense>
           </RegisterLayout>
         </UnauthenticatedGuard>
       </Route>
@@ -48,7 +57,9 @@ export default function Routes() {
       <Route path={path.user}>
         <AuthenticatedGuard>
           <MainLayout>
-            <User />
+            <Suspense fallback={<Loading />}>
+              <User />
+            </Suspense>
           </MainLayout>
         </AuthenticatedGuard>
       </Route>
@@ -56,13 +67,17 @@ export default function Routes() {
       <Route path={path.cart}>
         <AuthenticatedGuard>
           <CartLayout>
-            <Cart />
+            <Suspense fallback={<Loading />}>
+              <Cart />
+            </Suspense>
           </CartLayout>
         </AuthenticatedGuard>
       </Route>
 
       <Route path={path.notfound}>
-        <NotFound />
+        <Suspense fallback={<Loading />}>
+          <NotFound />
+        </Suspense>
       </Route>
     </Switch>
   )
