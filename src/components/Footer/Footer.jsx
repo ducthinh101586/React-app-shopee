@@ -1,16 +1,25 @@
+import classNames from 'classnames'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
+import i18n from '../../i18n/i18n'
 import * as S from './footer.style'
 
 export default function Footer() {
+  const { t } = useTranslation()
+  const changeLanguage = lng => i18n.changeLanguage(lng)
   return (
     <S.Footer>
       <div className="container">
         <S.Footer1>
           <div>© 2021 Shopee. Tất cả các quyền được bảo lưu.</div>
           <S.Language>
-            Ngôn ngữ:
-            <span>Tiếng Việt</span>
-            <span>Tiếng Anh</span>
+            {t('footer.language')}:
+            <span onClick={() => changeLanguage('en')} className={classNames({ active: i18n.language === 'en' })}>
+              Tiếng Anh
+            </span>
+            <span onClick={() => changeLanguage('vi')} className={classNames({ active: i18n.language === 'vi' })}>
+              Tiếng Việt
+            </span>
           </S.Language>
         </S.Footer1>
 
