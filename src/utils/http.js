@@ -11,6 +11,7 @@ class Http {
         'Content-Type': 'application/json'
       }
     })
+    //cấu hình cho response trả về
     this.instance.interceptors.response.use(
       response => {
         const result = { ...response.data, status: response.status }
@@ -27,6 +28,7 @@ class Http {
         return Promise.reject(result)
       }
     )
+    //cấu hình truyền lên
     this.instance.interceptors.request.use(
       config => {
         const accessToken = localStorage.getItem(LocalStorage.accessToken)
