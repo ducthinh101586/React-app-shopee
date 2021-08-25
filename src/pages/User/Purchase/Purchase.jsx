@@ -83,7 +83,7 @@ export default function Purchase() {
                 <img src={purchase.product.image} alt="" />
                 <S.OrderContent>
                   <S.OrderName>{purchase.product.name}</S.OrderName>
-                  <S.OrderQuantity>x {purchase.product.buy_count}</S.OrderQuantity>
+                  <S.OrderQuantity>x {purchase.buy_count}</S.OrderQuantity>
                 </S.OrderContent>
               </S.OrderCartDetail>
               <S.OrderCartPrice>đ{formatMoney(purchase.product.price)}</S.OrderCartPrice>
