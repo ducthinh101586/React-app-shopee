@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { path } from '../Constants/path'
 import { useAuthenticated } from '../hooks/useAuthenticated'
 import PropTypes from 'prop-types'
@@ -8,7 +8,7 @@ export default function AuthenticatedGuard({ children }) {
   const authenticated = useAuthenticated()
 
   if (!authenticated) {
-    return <Redirect to={path.login} />
+    return <Navigate to={path.login} />
   }
   return <Fragment>{children}</Fragment>
 }

@@ -3,7 +3,7 @@ import Navbar from '../Navbar/Navbar'
 import usePopover from '../../hooks/usePopover'
 import * as S from './Header.style'
 import Popover from '../Popover/Popover'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import useQuery from '../../hooks/useQuery'
 import { path } from '../../Constants/path'
 import { useSelector } from 'react-redux'
@@ -12,7 +12,7 @@ import { formatMoney } from '../../utils/helper'
 export default function Header() {
   const { activePopover, hidePopover, showPopover } = usePopover()
   const [searchValue, setSearchValue] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
   const query = useQuery()
   const purchases = useSelector(state => state.cart.purchases)
 
@@ -26,7 +26,7 @@ export default function Header() {
   }
   const search = event => {
     event.preventDefault()
-    history.push(path.home + `?name=${searchValue}`)
+    navigate(path.home + `?name=${searchValue}`)
   }
 
   return (

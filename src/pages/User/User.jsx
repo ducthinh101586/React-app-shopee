@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { path } from '../../Constants/path'
 import * as S from './user.style'
 import Profile from './Profile/Profile'
@@ -12,12 +12,12 @@ export default function User() {
       <S.Container className="container">
         <S.Sidebar>
           <S.Brief>
-            <S.BriefAvatar to={path.profile}>
+            <S.BriefAvatar to={path.user + path.profile}>
               <img src="https://cf.shopee.vn/file/858368a93c885a4b6ca0d1b07eabad6c_tn" alt="" />
             </S.BriefAvatar>
             <S.BriefRight>
               <S.BriefRightUserName>thinh101586</S.BriefRightUserName>
-              <S.BriefRightEdit to={path.profile}>
+              <S.BriefRightEdit to={path.user + path.profile}>
                 <svg
                   width={12}
                   height={12}
@@ -36,21 +36,21 @@ export default function User() {
             </S.BriefRight>
           </S.Brief>
           <S.SidebarMenu>
-            <S.SidebarMenuEntry to={path.profile}>
+            <S.SidebarMenuEntry to={path.user + path.profile}>
               <S.SidebarMenuEntryIcon>
                 <img src="https://cf.shopee.vn/file/ba61750a46794d8847c3f463c5e71cc4" alt="" />
               </S.SidebarMenuEntryIcon>
               Tài khoản của tôi
             </S.SidebarMenuEntry>
 
-            <S.SidebarMenuEntry to={path.password}>
+            <S.SidebarMenuEntry to={path.user + path.password}>
               <S.SidebarMenuEntryIcon>
                 <img src="https://cf.shopee.vn/file/ba61750a46794d8847c3f463c5e71cc4" alt="" />
               </S.SidebarMenuEntryIcon>
               Đổi mật khẩu
             </S.SidebarMenuEntry>
 
-            <S.SidebarMenuEntry to={path.purchase}>
+            <S.SidebarMenuEntry to={path.user + path.purchase}>
               <S.SidebarMenuEntryIcon>
                 <img src="https://cf.shopee.vn/file/f0049e9df4e536bc3e7f140d071e9078" alt="" />
               </S.SidebarMenuEntryIcon>
@@ -59,20 +59,12 @@ export default function User() {
           </S.SidebarMenu>
         </S.Sidebar>
         <S.Main>
-          <Switch>
-            <Route path={path.user} exact>
-              <Redirect to={path.profile} />
-            </Route>
-            <Route path={path.profile}>
-              <Profile />
-            </Route>
-            <Route path={path.password}>
-              <Password />
-            </Route>
-            <Route path={path.purchase}>
-              <Purchase />
-            </Route>
-          </Switch>
+          <Routes>
+            <Route path="/" element={<Navigate to={path.user + path.profile} />}></Route>
+            <Route path={path.profile.slice(1)} element={<Profile />}></Route>
+            <Route path={path.password.slice(1)} element={<Password />}></Route>
+            <Route path={path.purchase.slice(1)} element={<Purchase />}></Route>
+          </Routes>
         </S.Main>
       </S.Container>
     </div>
