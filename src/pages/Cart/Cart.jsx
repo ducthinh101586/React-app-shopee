@@ -165,7 +165,7 @@ export default function Cart() {
                   <img src={purchase.product.image} alt="" />
                 </S.CartItemOverViewImage>
                 <S.CartItemOverViewNameWrapper>
-                  <S.CartItemOverViewName>{purchase.product.name}</S.CartItemOverViewName>
+                  <S.CartItemOverViewName to="name product">{purchase.product.name}</S.CartItemOverViewName>
                 </S.CartItemOverViewNameWrapper>
               </S.CartItemOverView>
               <S.CartItemUnitPrice>

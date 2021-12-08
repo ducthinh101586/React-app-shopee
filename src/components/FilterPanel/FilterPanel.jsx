@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { path } from '../../Constants/path'
 import RatingStars from '../RatingStars/RatingStars'
 import * as S from './filterPanel.style'
@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form'
 
 export default function FilterPanel({ categories, filters }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const {
     control,
     handleSubmit,
@@ -63,6 +64,11 @@ export default function FilterPanel({ categories, filters }) {
     return minPrice !== '' || maxPrice !== '' || message
   }
 
+  const handleActiveClassCategoryItem = category => {
+    const query = qs.parse(location.search)
+    return query.category === category._id ? 'active' : ''
+  }
+
   return (
     <div>
       <S.CategoryTitleLink to={path.home}>
@@ -84,18 +90,12 @@ export default function FilterPanel({ categories, filters }) {
       <S.CategoryList>
         {categories.map(category => (
           <S.CategoryItem key={category._id}>
-            <NavLink
+            <Link
               to={path.home + `?category=${category._id}`}
-              isActive={(match, location) => {
-                if (!match) {
-                  return false
-                }
-                const query = qs.parse(location.search)
-                return query.category === category._id
-              }}
+              className={handleActiveClassCategoryItem(category) ? 'active' : ''}
             >
               {category.name}
-            </NavLink>
+            </Link>
           </S.CategoryItem>
         ))}
       </S.CategoryList>
